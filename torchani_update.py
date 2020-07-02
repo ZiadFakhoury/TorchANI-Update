@@ -9,8 +9,7 @@ from torchani.utils import ChemicalSymbolsToInts as CSTI
 import os
 from typing import NamedTuple, Tuple, Optional
 
-local = os.path.abspath(os.getcwd())
-
+local = os.path.dirname(os.path.realpath(__file__))
 model_path = os.path.join(local,r"ani-model-zoo-master\resources\ani-2x_8x")
 
 const = neurochem.Constants(os.path.join(model_path, 'rHCNOSFCl-5.1R_16-3.5A_a8-4.params'))
@@ -65,6 +64,13 @@ funcType = type(EShifter.sae)
 EShifter.sae = funcType(oversae, EShifter)
 
 finished_network = nn.Sequential(aev_computer, ANI2_Network, EShifter)
+
+def input_atoms(species, coords):
+    coords_res = torch.tensor([coords])
+    species_res = const.species_to_tensor(species).unsqueeze(0)
+    
+    return (species,coords)
+
 
 
 coordinates = torch.tensor([[[-1.0,0.0,0.0],
