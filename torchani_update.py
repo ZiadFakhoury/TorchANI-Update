@@ -46,10 +46,23 @@ def overforward(self, species_aev: Tuple[Tensor, Tensor],cell: Optional[Tensor] 
     output = output.view_as(species)
     return SpeciesEnergies(species, output)
 
+def oversae(self, species):
+
+        intercept = 0.0
+        if self.fit_intercept:
+            intercept = self.self_energies[-1]
+
+        self_energies = self.self_energies[species]
+        self_energies[species == torch.tensor(-1, device=species.device)] = torch.tensor(0, device=species.device, dtype=torch.double)
+        return self_energies + intercept
+
+
 
 funcType = type(ANI2_Network.forward)
-
 ANI2_Network.forward = funcType(overforward, ANI2_Network)
+
+funcType = type(EShifter.sae)
+EShifter.sae = funcType(oversae, EShifter)
 
 finished_network = nn.Sequential(aev_computer, ANI2_Network, EShifter)
 
@@ -61,4 +74,8 @@ coordinates = torch.tensor([[[-1.0,0.0,0.0],
 species = species_to_tensor(['O', 'C', 'O']).unsqueeze(0)
 
 print(finished_network((species, coordinates)))
+
+
+
+
 
