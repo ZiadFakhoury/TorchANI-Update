@@ -66,12 +66,11 @@ EShifter.sae = funcType(oversae, EShifter)
 
 finished_network = nn.Sequential(aev_computer, ANI2_Network, EShifter)
 
-species_to_tensor = CSTI(['H','O',"F", 'C'])
 
 coordinates = torch.tensor([[[-1.0,0.0,0.0],
                              [0.0,0.0,0.0],
                              [1.0,0.0,0.0]]])
-species = species_to_tensor(['O', 'C', 'O']).unsqueeze(0)
+species = const.species_to_tensor(['O', 'C', 'O']).unsqueeze(0)
 
 print(finished_network((species, coordinates)))
 
