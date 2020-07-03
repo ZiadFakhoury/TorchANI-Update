@@ -1,11 +1,9 @@
 import torch
 from torch import Tensor
-import numpy
 import torchani
-from torchani import ANIModel
+from torchani import ANIModel, AEVComputer
 from torchani import nn
 from torchani import neurochem
-from torchani.utils import ChemicalSymbolsToInts as CSTI
 import os
 from typing import NamedTuple, Tuple, Optional
 
@@ -13,7 +11,7 @@ local = os.path.dirname(os.path.realpath(__file__))
 model_path = os.path.join(local,r"ani-model-zoo-master\resources\ani-2x_8x")
 
 const = neurochem.Constants(os.path.join(model_path, 'rHCNOSFCl-5.1R_16-3.5A_a8-4.params'))
-aev_computer = torchani.AEVComputer(Rcr=const.Rcr, Rca=const.Rca, EtaR=const.EtaR, ShfR=const.ShfR, 
+aev_computer = AEVComputer(Rcr=const.Rcr, Rca=const.Rca, EtaR=const.EtaR, ShfR=const.ShfR, 
                                     EtaA=const.EtaA, Zeta=const.Zeta, ShfA=const.ShfA, ShfZ=const.ShfZ,
                                    num_species = const.num_species)
 
@@ -69,16 +67,19 @@ def input_atoms(species, coords):
     coords_res = torch.tensor([coords])
     species_res = const.species_to_tensor(species).unsqueeze(0)
     
-    return (species,coords)
+    return (species_res,coords_res)
 
 
 
-coordinates = torch.tensor([[[-1.0,0.0,0.0],
-                             [0.0,0.0,0.0],
-                             [1.0,0.0,0.0]]])
-species = const.species_to_tensor(['O', 'C', 'O']).unsqueeze(0)
+#coordinates = torch.tensor([[[-1.0,0.0,0.0],
+#                             [0.0,0.0,0.0],
+#                             [1.0,0.0,0.0]]])
+#species = const.species_to_tensor(['O', 'C', 'O']).unsqueeze(0)
 
-print(finished_network((species, coordinates)))
+#coordinates = [[-1.0,0.0,0.0], [0.0,0.0,0.0], [1.0,0.0,0.0]]
+#species = ['O', 'C', 'O']
+
+#print(finished_network(input_atoms(species, coordinates)))
 
 
 
